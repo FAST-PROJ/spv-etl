@@ -46,12 +46,15 @@ class dbConnection:
         bytes = b64decode(file_content, validate=True)
 
         if bytes[0:4] != b'%PDF':
+            print('error: Missing the PDF file signature')
             raise ValueError('Missing the PDF file signature')
 
         if file_name == None:
+            print('error: missing file_name')
             file_name = str(''.join(random.choices(string.ascii_uppercase + string.digits, k = 10)))
 
-        f = open(f'./source/{file_name}.pdf', 'wb')
+        print(f'/source/{file_name}.pdf')
+        f = open(f'/source/{file_name}.pdf', 'wb')
         f.write(bytes)
         f.close()
 
