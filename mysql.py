@@ -25,9 +25,10 @@ class dbConnection:
         self.conn = None
 
     def getDatabaseConnection(self):
+        print(HOST, USER, PASSWORD, DATABASE)
         self.conn = pymysql.connect(
             host       = HOST,
-            port       = PORT,
+            port       = 3306,
             user       = USER,
             password   = PASSWORD,
             db         = DATABASE,
