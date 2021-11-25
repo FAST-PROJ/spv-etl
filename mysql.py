@@ -53,8 +53,8 @@ class dbConnection:
             print('error: missing file_name')
             file_name = str(''.join(random.choices(string.ascii_uppercase + string.digits, k = 10)))
 
-        print(f'/source/{file_name}.pdf')
-        f = open(f'/source/{file_name}.pdf', 'wb')
+        print(f'source/{file_name}.pdf')
+        f = open(f'source/{file_name}.pdf', 'wb')
         f.write(bytes)
         f.close()
 
