@@ -20,7 +20,7 @@ class Reader:
 
     def setSourceDataPath():
         # The last item '""' create a separator "/" for linux or "\" for windows
-        return os.path.join(os.getcwd(), "etl", "source", "")
+        return os.path.join(os.getcwd(), "source", "")
 
     def setTextFromPdf(self, fileName):
         try:
