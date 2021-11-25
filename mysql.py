@@ -10,65 +10,76 @@ __status__     = "Development"
 
 import pymysql
 from sqlalchemy import create_engine
+import os
+from dotenv import load_dotenv
 
 class dbConnection:
-  def getConnection():
-    return pymysql.connect(
-      host="127.0.0.1",
-      port=3306,
-      user="root",
-      password="password",
-      autocommit=True
-    )
+    def __init__(self):
+        load_dotenv()
 
-  def insertFile(self, file_name):
-    cur = dbConnection.getConnection().cursor()
-    cur.execute(f"""INSERT INTO text.files (full_name) VALUES ('{file_name}');""")
+        self.HOST     = os.getenv('DB_HOST')
+        self.PORT     = os.getenv('DB_PORT')
+        self.USER     = os.getenv('DB_USERNAME')
+        self.PASSWORD = os.getenv('DB_PASSWORD')
+        self.DATABASE = os.getenv('DB_DATABASE')
 
-  def getFile(self, id):
-    cur = dbConnection.getConnection().cursor()
-    cur.execute(f"""
-                    select 
-                      id, 
-                      full_name 
-                    from 
-                      text.files
-                    where
-                      id = {id}
-                """)
+    def getConnection(self):
+        return pymysql.connect(
+            host       = self.HOST,
+            port       = self.PORT,
+            user       = self.USER,
+            password   = self.PASSWORD,
+            autocommit = True
+        )
 
-    dbConnection.getConnection().close()
-    
-    result = cur.fetchall()[0]
+    def insertFile(self, file_name):
+        cur = dbConnection.getConnection().cursor()
+        cur.execute(f"""INSERT INTO text.files (full_name) VALUES ('{file_name}');""")
 
-    file_info = {"id":result[0], "name":result[1]}
+    def getFile(self, id):
+        cur = dbConnection.getConnection().cursor()
+        cur.execute(f"""
+                        select
+                        id,
+                        full_name
+                        from
+                        text.files
+                        where
+                        id = {id}
+                    """)
 
-    return file_info
+        dbConnection.getConnection().close()
 
-  def getFiles(self):
-    cur = dbConnection.getConnection().cursor()
-    cur.execute("""select id, full_name from text.Files""")
+        result = cur.fetchall()[0]
 
-    filesList = []
-    for item in cur.fetchall():
-      filesList.append({"id":item[0], "name":item[1]})
-    dbConnection.getConnection().close()
-    return filesList
+        file_info = {"id":result[0], "name":result[1]}
 
-  def insertRawText(self, insertDataframe):
-    engine = create_engine('mysql+pymysql://root:password@localhost/text')
-    insertDataframe.columns = ['fileId', 'rawText']
-    insertDataframe.set_index('fileId', inplace=True)
-    insertDataframe.to_sql('ingestion_files', con = engine, if_exists='append')
+        return file_info
 
-  def insertRefinedText(self, insertDataframe):
-    engine = create_engine('mysql+pymysql://root:password@localhost/text')
-    insertDataframe.columns = ['fileId', 'refinedText']
-    insertDataframe.set_index('fileId', inplace=True)
-    insertDataframe.to_sql('refined_files', con = engine, if_exists='append')
+    def getFiles(self):
+        cur = dbConnection.getConnection().cursor()
+        cur.execute("""select id, full_name from text.Files""")
 
-  def insertFeatureText(self, insertDataframe):
-    engine = create_engine('mysql+pymysql://root:password@localhost/text')
-    insertDataframe.columns = ['fileId', 'word', 'sentence']
-    insertDataframe.set_index('fileId', inplace=True)
-    insertDataframe.to_sql('feature_files', con = engine, if_exists='append')
+        filesList = []
+        for item in cur.fetchall():
+        filesList.append({"id":item[0], "name":item[1]})
+        dbConnection.getConnection().close()
+        return filesList
+
+    def insertRawText(self, insertDataframe):
+        engine = create_engine('mysql+pymysql://'+ dbConnection.USER +':'+ dbConnection.PASSWORD +'@'+ dbConnection.HOST +'/'+ dbConnection.DATABASE)
+        insertDataframe.columns = ['fileId', 'rawText']
+        insertDataframe.set_index('fileId', inplace=True)
+        insertDataframe.to_sql('ingestion_files', con = engine, if_exists='append')
+
+    def insertRefinedText(self, insertDataframe):
+        engine = create_engine('mysql+pymysql://'+ dbConnection.USER +':'+ dbConnection.PASSWORD +'@'+ dbConnection.HOST +'/'+ dbConnection.DATABASE)
+        insertDataframe.columns = ['fileId', 'refinedText']
+        insertDataframe.set_index('fileId', inplace=True)
+        insertDataframe.to_sql('refined_files', con = engine, if_exists='append')
+
+    def insertFeatureText(self, insertDataframe):
+        engine = create_engine('mysql+pymysql://'+ dbConnection.USER +':'+ dbConnection.PASSWORD +'@'+ dbConnection.HOST +'/'+ dbConnection.DATABASE)
+        insertDataframe.columns = ['fileId', 'word', 'sentence']
+        insertDataframe.set_index('fileId', inplace=True)
+        insertDataframe.to_sql('feature_files', con = engine, if_exists='append')

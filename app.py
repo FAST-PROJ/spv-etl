@@ -36,7 +36,7 @@ def rawText(id):
 
   #Cria um dicionario com as informações do arquivo
   rawText = {
-              "id": [reader.getFileId()], 
+              "id": [reader.getFileId()],
               "text":[reader.getTextFromPdf()]
   }
 
@@ -44,7 +44,7 @@ def rawText(id):
   connection.insertRawText(pd.DataFrame(data=rawText))
 
 def refinedText():
-  
+
   numbersClean = cleaner.removeIsolatedNumbers(reader.getTextFromPdf())
   spaceClean = cleaner.removeSpaces(numbersClean)
   blankClean = cleaner.removeBlankLines(spaceClean)
