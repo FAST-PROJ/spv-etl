@@ -12,6 +12,9 @@ import pymysql
 from sqlalchemy import create_engine
 import os
 from dotenv import load_dotenv
+from base64 import b64decode
+import string
+import random
 
 load_dotenv()
 HOST     = os.getenv('DB_HOST')
@@ -39,7 +42,19 @@ class dbConnection:
         if self.conn != None:
             self.conn.close()
 
-    def insertFile(self, file_name):
+    def insertFile(self, file_name = None, file_content = None):
+        bytes = b64decode(file_content, validate=True)
+
+        if bytes[0:4] != b'%PDF':
+            raise ValueError('Missing the PDF file signature')
+
+        if file_name == None:
+            file_name = str(''.join(random.choices(string.ascii_uppercase + string.digits, k = 10)))
+
+        f = open(f'./source/{file_name}.pdf', 'wb')
+        f.write(bytes)
+        f.close()
+
         cursor = self.getDatabaseConnection()
         cursor.execute('INSERT INTO files (full_name) VALUES(%s)', file_name)
         cursor.close()

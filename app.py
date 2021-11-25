@@ -36,7 +36,7 @@ def index():
 def insertFiles():
     input_json = request.get_json(force=True)
     print(input_json)
-    connection.insertFile(input_json['file_name'])
+    connection.insertFile(input_json['file_name'], input_json['file_content'])
     return '200'
 
 @app.route('/processFiles', methods=['POST'])
