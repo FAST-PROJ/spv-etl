@@ -56,14 +56,7 @@ class dbConnection:
             file_name = str(''.join(random.choices(string.ascii_uppercase + string.digits, k = 10))) + '.pdf'
 
         dbx = dropbox.Dropbox(DROPBOX_ACCESS_TOKEN)
-
-        filename = f'/local_files/{file_name}'
-        dbx.files_upload(file_content, filename, mute=True)
-
-        # print(f'source/{file_name}.pdf')
-        # f = open(f'source/{file_name}.pdf', 'wb')
-        # f.write(bytes)
-        # f.close()
+        dbx.files_upload(bytes, f'/local_files/{file_name}', mute=True)
 
         cursor = self.getDatabaseConnection()
         cursor.execute('INSERT INTO files (full_name) VALUES(%s)', file_name)
