@@ -15,7 +15,6 @@ from reader import Reader
 from cleaner import Cleaner
 from feature import Feature
 import pandas as pd
-import os
 
 app = Flask(__name__)
 
@@ -95,13 +94,3 @@ def featureText():
 
     # Efetua o insert na camada gold
     connection.insertFeatureText(pd.DataFrame(data=featureText))
-
-
-#teste localhost
-'''if __name__ == '__main__':
-    app.run(debug=True)'''
-
-#teste heroku
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port)

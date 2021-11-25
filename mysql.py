@@ -48,14 +48,12 @@ class dbConnection:
         bytes = b64decode(file_content, validate=True)
 
         if bytes[0:4] != b'%PDF':
-            print('error: Missing the PDF file signature')
-            raise ValueError('Missing the PDF file signature')
+            raise ValueError('O arquivo deve ser do tipo PDF')
 
         if file_name == None:
-            print('error: missing file_name')
             file_name = str(''.join(random.choices(string.ascii_uppercase + string.digits, k = 10)))
 
-        file_name += file_name + '.pdf'
+        file_name = file_name + '.pdf'
 
         dbx = dropbox.Dropbox(DROPBOX_ACCESS_TOKEN)
         dbx.files_upload(bytes, f'/local_files/{file_name}', mute=True)
