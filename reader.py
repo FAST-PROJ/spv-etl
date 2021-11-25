@@ -11,20 +11,27 @@ __status__     = "Development"
 from pdfminer.high_level import extract_text # pip install pdfminer.six
 import os
 import re
+import dropbox
+from dotenv import load_dotenv
+from tika import parser
+
+load_dotenv()
+DROPBOX_ACCESS_TOKEN = os.getenv('DROPBOX_ACCESS_TOKEN')
 
 class Reader:
     def __init__(self):
         self.sourcePath = Reader.setSourceDataPath()
+        self.dbx = dropbox.Dropbox(DROPBOX_ACCESS_TOKEN)
         self.text = ''
         self.id = None
 
     def setSourceDataPath():
-        # The last item '""' create a separator "/" for linux or "\" for windows
         return os.path.join(os.getcwd(), "source", "")
 
     def setTextFromPdf(self, fileName):
         try:
-            self.text = extract_text(f"{self.sourcePath}{fileName}.pdf")
+            self.dbx.files_download_to_file(f"{self.sourcePath}output.pdf", f'/local_files/{fileName}')
+            self.text = extract_text(f"{self.sourcePath}output.pdf")
         except Exception as e:
             print(str(e))
 
