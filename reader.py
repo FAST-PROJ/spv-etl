@@ -13,7 +13,6 @@ import os
 import re
 import dropbox
 from dotenv import load_dotenv
-from tika import parser
 
 load_dotenv()
 DROPBOX_ACCESS_TOKEN = os.getenv('DROPBOX_ACCESS_TOKEN')
