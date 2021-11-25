@@ -31,7 +31,10 @@ A senha de acesso é: `password`
 
 > Quarto, para rodar a aplicação, execute o comando: `flask run`, isso permitirá utilizar as API's para alimentar as tabelas.
 
->API'S Disponiveis:
+> URL da API
+**https://spv-etl.herokuapp.com**
+
+>Endpoints Disponiveis:
 
 @/insertFiles [POST]
 Essa API insere um registro na tabela text.files, para isso, será necessário passar o nome do arquivo como parâmetro.
