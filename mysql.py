@@ -15,6 +15,7 @@ from dotenv import load_dotenv
 from base64 import b64decode
 import string
 import random
+import dropbox
 
 load_dotenv()
 HOST     = os.getenv('DB_HOST')
@@ -22,6 +23,7 @@ PORT     = os.getenv('DB_PORT')
 USER     = os.getenv('DB_USERNAME')
 PASSWORD = os.getenv('DB_PASSWORD')
 DATABASE = os.getenv('DB_DATABASE')
+DROPBOX_ACCESS_TOKEN = os.getenv('DROPBOX_ACCESS_TOKEN')
 
 class dbConnection:
     def __init__(self):
@@ -51,12 +53,17 @@ class dbConnection:
 
         if file_name == None:
             print('error: missing file_name')
-            file_name = str(''.join(random.choices(string.ascii_uppercase + string.digits, k = 10)))
+            file_name = str(''.join(random.choices(string.ascii_uppercase + string.digits, k = 10))) + '.pdf'
 
-        print(f'source/{file_name}.pdf')
-        f = open(f'source/{file_name}.pdf', 'wb')
-        f.write(bytes)
-        f.close()
+        dbx = dropbox.Dropbox(DROPBOX_ACCESS_TOKEN)
+
+        filename = f'/local_files/{file_name}'
+        dbx.files_upload(file_content, filename, mute=True)
+
+        # print(f'source/{file_name}.pdf')
+        # f = open(f'source/{file_name}.pdf', 'wb')
+        # f.write(bytes)
+        # f.close()
 
         cursor = self.getDatabaseConnection()
         cursor.execute('INSERT INTO files (full_name) VALUES(%s)', file_name)
