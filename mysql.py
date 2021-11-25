@@ -23,12 +23,12 @@ class dbConnection:
         self.PASSWORD = os.getenv('DB_PASSWORD')
         self.DATABASE = os.getenv('DB_DATABASE')
 
-    def getConnection(self):
+    def getConnection():
         return pymysql.connect(
-            host       = self.HOST,
-            port       = self.PORT,
-            user       = self.USER,
-            password   = self.PASSWORD,
+            host       = dbConnection.HOST,
+            port       = dbConnection.PORT,
+            user       = dbConnection.USER,
+            password   = dbConnection.PASSWORD,
             autocommit = True
         )
 
