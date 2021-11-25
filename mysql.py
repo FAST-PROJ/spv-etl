@@ -25,7 +25,6 @@ class dbConnection:
         self.conn = None
 
     def getDatabaseConnection(self):
-        print(HOST, USER, PASSWORD, DATABASE)
         self.conn = pymysql.connect(
             host       = HOST,
             port       = 3306,
@@ -42,34 +41,23 @@ class dbConnection:
 
     def insertFile(self, file_name):
         cursor = self.getDatabaseConnection()
-        cursor.execute(f"""INSERT INTO text.files (full_name) VALUES ('{file_name}');""")
+        cursor.execute('INSERT INTO files (full_name) VALUES(%s)', file_name)
         cursor.close()
         self.closeDatabaseConnection()
 
     def getFile(self, id):
         cursor = self.getDatabaseConnection()
-        cursor.execute(f"""
-                        select
-                        id,
-                        full_name
-                        from
-                        text.files
-                        where
-                        id = {id}
-                    """)
-
+        cursor.execute('select id, full_name from files where id = %s', id)
+        result = cursor.fetchall()[0]
+        file_info = {"id":result[0], "name":result[1]}
         cursor.close()
         self.closeDatabaseConnection()
-
-        result = cursor.fetchall()[0]
-
-        file_info = {"id":result[0], "name":result[1]}
 
         return file_info
 
     def getFiles(self):
         cursor = self.getDatabaseConnection()
-        cursor.execute("""select id, full_name from text.Files""")
+        cursor.execute('select id, full_name from files')
 
         filesList = []
         for item in cursor.fetchall():
