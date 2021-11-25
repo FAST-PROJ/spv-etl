@@ -21,23 +21,33 @@ PASSWORD = os.getenv('DB_PASSWORD')
 DATABASE = os.getenv('DB_DATABASE')
 
 class dbConnection:
+    def __init__(self):
+        self.conn = None
 
-    def getConnection():
-        return pymysql.connect(
+    def getDatabaseConnection(self):
+        self.conn = pymysql.connect(
             host       = HOST,
             port       = PORT,
             user       = USER,
             password   = PASSWORD,
-            autocommit = True
+            db         = DATABASE,
+            autocommit=True
         )
+        return self.conn.cursor()
+
+    def closeDatabaseConnection(self):
+        if self.conn != None:
+            self.conn.close()
 
     def insertFile(self, file_name):
-        cur = dbConnection.getConnection().cursor()
-        cur.execute(f"""INSERT INTO text.files (full_name) VALUES ('{file_name}');""")
+        cursor = self.getDatabaseConnection()
+        cursor.execute(f"""INSERT INTO text.files (full_name) VALUES ('{file_name}');""")
+        cursor.close()
+        self.closeDatabaseConnection()
 
     def getFile(self, id):
-        cur = dbConnection.getConnection().cursor()
-        cur.execute(f"""
+        cursor = self.getDatabaseConnection()
+        cursor.execute(f"""
                         select
                         id,
                         full_name
@@ -47,23 +57,26 @@ class dbConnection:
                         id = {id}
                     """)
 
-        dbConnection.getConnection().close()
+        cursor.close()
+        self.closeDatabaseConnection()
 
-        result = cur.fetchall()[0]
+        result = cursor.fetchall()[0]
 
         file_info = {"id":result[0], "name":result[1]}
 
         return file_info
 
     def getFiles(self):
-        cur = dbConnection.getConnection().cursor()
-        cur.execute("""select id, full_name from text.Files""")
+        cursor = self.getDatabaseConnection()
+        cursor.execute("""select id, full_name from text.Files""")
 
         filesList = []
-        for item in cur.fetchall():
+        for item in cursor.fetchall():
             filesList.append({"id":item[0], "name":item[1]})
-            dbConnection.getConnection().close()
-            return filesList
+
+        cursor.close()
+        self.closeDatabaseConnection()
+        return filesList
 
     def insertRawText(self, insertDataframe):
         engine = create_engine('mysql+pymysql://'+ USER +':'+ PASSWORD +'@'+ HOST +'/'+ DATABASE)
