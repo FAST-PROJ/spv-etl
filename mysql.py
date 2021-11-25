@@ -62,9 +62,9 @@ class dbConnection:
 
         filesList = []
         for item in cur.fetchall():
-        filesList.append({"id":item[0], "name":item[1]})
-        dbConnection.getConnection().close()
-        return filesList
+            filesList.append({"id":item[0], "name":item[1]})
+            dbConnection.getConnection().close()
+            return filesList
 
     def insertRawText(self, insertDataframe):
         engine = create_engine('mysql+pymysql://'+ dbConnection.USER +':'+ dbConnection.PASSWORD +'@'+ dbConnection.HOST +'/'+ dbConnection.DATABASE)

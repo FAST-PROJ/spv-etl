@@ -11,18 +11,18 @@ __status__     = "Development"
 import re
 
 class Feature:
-  def __init__(self):
-    self.words = ''
-    self.sentences = ''
+    def __init__(self):
+        self.words = ''
+        self.sentences = ''
 
-  def setSentenceToList(self, text):
-    self.sentences = re.findall("[^\n]+", text, flags=re.M)
+    def setSentenceToList(self, text):
+        self.sentences = re.findall("[^\n]+", text, flags=re.M)
 
-  def getSentenceToList(self):
-    return self.sentences
+    def getSentenceToList(self):
+        return self.sentences
 
-  def setWordToList(self, text):
-    self.words = re.findall("\w+", text, flags=re.M)
+    def setWordToList(self, text):
+        self.words = re.findall("\w+", text, flags=re.M)
 
-  def getWordToList(self):
-    return self.words
+    def getWordToList(self):
+        return self.words

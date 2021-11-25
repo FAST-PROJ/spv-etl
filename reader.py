@@ -13,29 +13,29 @@ import os
 import re
 
 class Reader:
-  def __init__(self):
-    self.sourcePath = Reader.setSourceDataPath()
-    self.text = ''
-    self.id = None
+    def __init__(self):
+        self.sourcePath = Reader.setSourceDataPath()
+        self.text = ''
+        self.id = None
 
-  def setSourceDataPath():
-    # The last item '""' create a separator "/" for linux or "\" for windows
-    return os.path.join(os.getcwd(), "etl", "source", "")
+    def setSourceDataPath():
+        # The last item '""' create a separator "/" for linux or "\" for windows
+        return os.path.join(os.getcwd(), "etl", "source", "")
 
-  def setTextFromPdf(self, fileName):
-    try:
-      self.text = extract_text(f"{self.sourcePath}{fileName}.pdf")
-    except Exception as e:
-      print(str(e))
+    def setTextFromPdf(self, fileName):
+        try:
+            self.text = extract_text(f"{self.sourcePath}{fileName}.pdf")
+        except Exception as e:
+            print(str(e))
 
-  def getTextFromPdf(self):
-      return self.text
+    def getTextFromPdf(self):
+        return self.text
 
-  def getLinks(self, text):
-    return re.findall("www\.\w+\.\w+[^ \n]+", text, flags=re.M)
+    def getLinks(self, text):
+        return re.findall("www\.\w+\.\w+[^ \n]+", text, flags=re.M)
 
-  def setFileId(self, id):
-    self.id = id
+    def setFileId(self, id):
+        self.id = id
 
-  def getFileId(self):
-    return self.id
+    def getFileId(self):
+        return self.id

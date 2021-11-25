@@ -25,55 +25,53 @@ feature = Feature()
 
 def rawText(id):
 
-  # Preenche o parametro de fileId
-  reader.setFileId(id)
+    # Preenche o parametro de fileId
+    reader.setFileId(id)
 
-  # Coleta as informações do banco de dados a partir do id do arquivo
-  file = connection.getFile(reader.getFileId())
+    # Coleta as informações do banco de dados a partir do id do arquivo
+    file = connection.getFile(reader.getFileId())
 
-  # Leitura do arquivo da pasta source
-  reader.setTextFromPdf(f"{file['name']}")
+    # Leitura do arquivo da pasta source
+    reader.setTextFromPdf(f"{file['name']}")
 
-  #Cria um dicionario com as informações do arquivo
-  rawText = {
-              "id": [reader.getFileId()],
-              "text":[reader.getTextFromPdf()]
-  }
+    #Cria um dicionario com as informações do arquivo
+    rawText = {
+            "id": [reader.getFileId()],
+            "text":[reader.getTextFromPdf()]
+        }
 
-  #Efetua o insert na camada bronze
-  connection.insertRawText(pd.DataFrame(data=rawText))
+    #Efetua o insert na camada bronze
+    connection.insertRawText(pd.DataFrame(data=rawText))
 
 def refinedText():
+    numbersClean = cleaner.removeIsolatedNumbers(reader.getTextFromPdf())
+    spaceClean = cleaner.removeSpaces(numbersClean)
+    blankClean = cleaner.removeBlankLines(spaceClean)
+    cleanText = cleaner.removeSpecialCaracteres(blankClean)
+    cleaner.setCleanText(cleanText)
 
-  numbersClean = cleaner.removeIsolatedNumbers(reader.getTextFromPdf())
-  spaceClean = cleaner.removeSpaces(numbersClean)
-  blankClean = cleaner.removeBlankLines(spaceClean)
-  cleanText = cleaner.removeSpecialCaracteres(blankClean)
-  cleaner.setCleanText(cleanText)
+    #Cria um dicionario com as informações do arquivo
+    refinedText = {
+        "id": [reader.getFileId()],
+        "text":[cleaner.getCleanText()]
+    }
 
-  #Cria um dicionario com as informações do arquivo
-  refinedText = {
-              "id": [reader.getFileId()],
-              "text":[cleaner.getCleanText()]
-  }
-
-  #Efetua o insert na camada silver
-  connection.insertRefinedText(pd.DataFrame(data=refinedText))
+    #Efetua o insert na camada silver
+    connection.insertRefinedText(pd.DataFrame(data=refinedText))
 
 def featureText():
+    feature.setSentenceToList(cleaner.getCleanText())
+    feature.setWordToList(cleaner.getCleanText())
 
-  feature.setSentenceToList(cleaner.getCleanText())
-  feature.setWordToList(cleaner.getCleanText())
+    #Cria um dicionario com as informações do arquivo
+    featureText = {
+        "id": [reader.getFileId()],
+        "word":[str(feature.getWordToList())],
+        "sentence":[str(feature.getSentenceToList())]
+    }
 
-  #Cria um dicionario com as informações do arquivo
-  featureText = {
-              "id": [reader.getFileId()],
-              "word":[str(feature.getWordToList())],
-              "sentence":[str(feature.getSentenceToList())]
-  }
-
-  #Efetua o insert na camada gold
-  connection.insertFeatureText(pd.DataFrame(data=featureText))
+    #Efetua o insert na camada gold
+    connection.insertFeatureText(pd.DataFrame(data=featureText))
 
 rawText(1)
 refinedText()
