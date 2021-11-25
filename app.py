@@ -28,7 +28,7 @@ cleaner = Cleaner()
 # Inicia a classe de features
 feature = Feature()
 
-@app.route('/index/')
+@app.route('/', methods=['GET'])
 def index():
     return render_template('index.html')
 
