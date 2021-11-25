@@ -1,3 +1,3 @@
-web: python app.py
+web: python service/api.py
 
 worker: python app.py
