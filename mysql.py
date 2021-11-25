@@ -53,7 +53,9 @@ class dbConnection:
 
         if file_name == None:
             print('error: missing file_name')
-            file_name = str(''.join(random.choices(string.ascii_uppercase + string.digits, k = 10))) + '.pdf'
+            file_name = str(''.join(random.choices(string.ascii_uppercase + string.digits, k = 10)))
+
+        file_name += file_name + '.pdf'
 
         dbx = dropbox.Dropbox(DROPBOX_ACCESS_TOKEN)
         dbx.files_upload(bytes, f'/local_files/{file_name}', mute=True)
