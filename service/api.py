@@ -8,12 +8,14 @@ __maintainer__ = "FAST-PROJ"
 __email__      = "#"
 __status__     = "Development"
 
-from flask import Flask, request
+from flask import Flask, request, jsonify
+from flask import render_template
 from mysql import dbConnection
 from reader import Reader
 from cleaner import Cleaner
 from feature import Feature
 import pandas as pd
+import os
 
 app = Flask(__name__)
 
@@ -25,6 +27,10 @@ reader = Reader()
 cleaner = Cleaner()
 # Inicia a classe de features
 feature = Feature()
+
+@app.route('/index/')
+def index():
+    return render_template('index.html')
 
 @app.route('/insertFiles', methods=['POST'])
 def insertFiles():
@@ -89,3 +95,13 @@ def featureText():
 
     # Efetua o insert na camada gold
     connection.insertFeatureText(pd.DataFrame(data=featureText))
+
+
+#teste localhost
+'''if __name__ == '__main__':
+    app.run(debug=True)'''
+
+#teste heroku
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
