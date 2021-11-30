@@ -58,6 +58,7 @@ class dbConnection:
         dbx = dropbox.Dropbox(DROPBOX_ACCESS_TOKEN)
         dbx.files_upload(bytes, f'/local_files/{file_name}', mute=True)
 
+        # Retornar o id do arquivo salvo na base de dados
         cursor = self.getDatabaseConnection()
         cursor.execute('INSERT INTO files (full_name) VALUES(%s)', file_name)
         cursor.close()
@@ -68,6 +69,16 @@ class dbConnection:
         cursor.execute('select id, full_name from files where id = %s', id)
         result = cursor.fetchall()[0]
         file_info = {"id":result[0], "name":result[1]}
+        cursor.close()
+        self.closeDatabaseConnection()
+
+        return file_info
+
+    def getRefinedFile(self, id, fileid):
+        cursor = self.getDatabaseConnection()
+        cursor.execute('select * from refined_files where id = %s AND fileid = %s', id, fileid)
+        result = cursor.fetchall()[0]
+        file_info = {"id": result[0], "fileid": result[1], "text": result[2]}
         cursor.close()
         self.closeDatabaseConnection()
 

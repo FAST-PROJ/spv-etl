@@ -15,6 +15,7 @@ from reader import Reader
 from cleaner import Cleaner
 from feature import Feature
 import pandas as pd
+from transformers import pipeline
 
 app = Flask(__name__)
 
@@ -34,16 +35,29 @@ def index():
 @app.route('/insertFiles', methods=['POST'])
 def insertFiles():
     input_json = request.get_json(force=True)
-    print(input_json['file_content'])
-    connection.insertFile(input_json['file_name'], input_json['file_content'])
-    return '200'
+    # 1 - Pegar o id do arquivo salvo
+    id = connection.insertFile(input_json['file_name'], input_json['file_content'])
 
-@app.route('/processFiles', methods=['POST'])
-def processFiles():
-    input_json = request.get_json(force=True)
-    rawText(input_json['id'])
+    rawText(id)
     refinedText()
     featureText()
+    return '200'
+
+@app.route('/recebePergunta', methods=['POST'])
+def processFiles():
+    input_json = request.get_json(force=True)
+    alunoID = input_json['id']
+    questionText = input_json['question']
+    # 1 - SELECT FROM refined_files WHERE ID = 35 AND fileid = 145
+    #       Utilizar o metodo connection.getRefinedFile(35, 145)
+    # 2 - SALVAR A PERGUNTA `questionText`, o ID do aluno `alunoID` e a resposta (gerada pelo BERTI) acuracy Na tabela answers
+    # 3 - Chamar o endpoint de notificação do chatbot
+    #       http://senac-professor-virtual.herokuapp.com/api/notifications
+    #       POST
+    #       {
+    #           "id": 1,
+    #           "answer": "IA é uma áres de estudo"
+    #       }
     return '200'
 
 def rawText(id):
