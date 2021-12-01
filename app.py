@@ -16,6 +16,7 @@ from cleaner import Cleaner
 from feature import Feature
 import pandas as pd
 from transformers import pipeline
+from bertSingleton import Bert
 
 app = Flask(__name__)
 
@@ -48,6 +49,12 @@ def processFiles():
     input_json = request.get_json(force=True)
     alunoID = input_json['id']
     questionText = input_json['question']
+    contextData = connection.getRefinedFile(35, 145)
+
+    bert = Bert.instance()
+    result = bert(question=[questionText], context=contextData['text'])
+
+    connection.insertAnswer(questionText, result['answer'], result['score'], alunoID)
     # 1 - SELECT FROM refined_files WHERE ID = 35 AND fileid = 145
     #       Utilizar o metodo connection.getRefinedFile(35, 145)
     # 2 - SALVAR A PERGUNTA `questionText`, o ID do aluno `alunoID` e a resposta (gerada pelo BERTI) acuracy Na tabela answers

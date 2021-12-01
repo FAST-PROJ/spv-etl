@@ -64,6 +64,12 @@ class dbConnection:
         cursor.close()
         self.closeDatabaseConnection()
 
+    def insertAnswer(self, questionText, answer, score, alunoId):
+        cursor = self.getDatabaseConnection()
+        cursor.execute('INSERT INTO answers (question, answer, acuracy, user_id) VALUES(%s, %s, %s, %s)', questionText, answer, score, alunoId)
+        cursor.close()
+        self.closeDatabaseConnection()
+
     def getFile(self, id):
         cursor = self.getDatabaseConnection()
         cursor.execute('select id, full_name from files where id = %s', id)
