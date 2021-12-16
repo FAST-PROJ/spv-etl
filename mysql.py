@@ -82,7 +82,7 @@ class dbConnection:
 
     def getRefinedFile(self, id, fileid):
         cursor = self.getDatabaseConnection()
-        cursor.execute('select * from refined_files where id = %s AND fileid = %s', id, fileid)
+        cursor.execute('select id, fileId, refinedText from refined_files where id = %s AND fileid = %s', id, fileid)
         result = cursor.fetchall()[0]
         file_info = {"id": result[0], "fileid": result[1], "text": result[2]}
         cursor.close()
