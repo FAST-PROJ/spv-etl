@@ -15,7 +15,6 @@ from reader import Reader
 from cleaner import Cleaner
 from feature import Feature
 import pandas as pd
-from transformers import pipeline
 from bertSingleton import Bert
 
 app = Flask(__name__)
